@@ -12,6 +12,7 @@ module Slack
         @options = options
         @users = {}
         @channels = {}
+        @channel_ids = {}
       end
 
       def connect(&message_handler)
@@ -33,7 +34,8 @@ module Slack
         }
       end
 
-      def send(data)
+      def send(ch_name, data)
+        data['channel'] = channel_id(ch_name)
         @ws.send(data.to_json)
       end
 
@@ -68,7 +70,16 @@ module Slack
       def channel_name(channel_id)
         return @channels[channel_id] if @channels.key?(channel_id)
         response = slack_post("#{API_URL}/channels.info", {channel: channel_id})
-        response['ok'] ? @channels[channel_id] = response['channel']['name'] : ''
+        if response['ok']
+          @channel_ids[response['channel']['name']] = channel_id
+          @channels[channel_id] = response['channel']['name']
+        else
+          ''
+        end
+      end
+
+      def channel_id(name)
+        @channel_ids.key?(name) ? @channel_ids[name] : ''
       end
 
       def slack_post(url, data = {})
