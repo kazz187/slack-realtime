@@ -19,13 +19,11 @@ module Slack
           @ws = Faye::WebSocket::Client.new(wss_url)
 
           @ws.on :open do |event|
-            p [:open]
           end
 
           @ws.on :message do |event|
             data = JSON.parse(event.data)
             message_handler.call(resolve_name(data))
-            p [:message, data]
           end
 
           @ws.on :close do |event|
