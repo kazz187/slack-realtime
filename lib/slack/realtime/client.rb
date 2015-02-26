@@ -31,8 +31,9 @@ module Slack
             'id' => @id += 1,
             'type' => 'message',
             'text' => options[:text],
+            'channel' => options[:channel],
         }
-        connection.send(options[:channel], data)
+        connection.send(data)
       end
 
       private

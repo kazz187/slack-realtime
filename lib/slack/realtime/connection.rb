@@ -34,8 +34,7 @@ module Slack
         }
       end
 
-      def send(ch_name, data)
-        data['channel'] = channel_id(ch_name)
+      def send(data)
         @ws.send(data.to_json)
       end
 
