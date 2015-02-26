@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Slack::Realtime::VERSION
   spec.authors       = ["Kazuki AKAMINE"]
   spec.email         = ["kazzone87@gmail.com"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
+  spec.description   = %q{Slack realtime api eventmachine with websocket.}
+  spec.summary       = %q{Slack realtime api eventmachine with websocket.}
   spec.homepage      = ""
   spec.license       = "MIT"
 
