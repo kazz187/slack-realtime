@@ -16,26 +16,40 @@ module Slack
       end
 
       def connect(&message_handler)
-        EM.run {
-          @ws = Faye::WebSocket::Client.new(wss_url)
+        loop do
+          EM.run do
+            @ws = Faye::WebSocket::Client.new(wss_url)
 
-          @ws.on :open do |event|
-          end
+            @ws.on :open do |event|
+            end
 
-          @ws.on :message do |event|
-            data = JSON.parse(event.data)
-            message_handler.call(resolve_name(data))
-          end
+            @ws.on :message do |event|
+              data = JSON.parse(event.data)
+              message_handler.call(resolve_name(data))
+            end
 
-          @ws.on :close do |event|
-            p [:close, event.code, event.reason]
-            # TODO: reconnect
+            @ws.on :close do |event|
+              p [:close, event.code, event.reason]
+              @ws = nil
+              EM.stop
+            end
           end
-        }
+          sleep 0.5
+        end
       end
 
       def send(data)
-        @ws.send(data.to_json)
+        loop do
+          unless @ws.nil?
+            begin
+              @ws.send(data.to_json)
+              break
+            rescue
+              p [:retry, data]
+            end
+          end
+          sleep 0.5
+        end
       end
 
    private
